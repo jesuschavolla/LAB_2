@@ -46,12 +46,13 @@ int main(void)
 	KeypadInitialize();
 	
 	// TODO: Initialize scanKeypad variable.
-	
+        scanKeypad=1;
 	while(1)
 	{
 		// TODO: Once you create the correct keypad driver (Part 1 of the lab assignment), write
 		// the C program that use both the keypad and LCD drivers to implement the 4-digit password system.
 		
+
 		if( scanKeypad == 1 ) {
 			key = KeypadScan();
 			if( key != -1 ) {

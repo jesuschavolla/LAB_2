@@ -33,6 +33,10 @@ void KeypadInitialize() {
     CNPU1bits.CN2PUE = 1; // pull up resistor for columns
     CNPU1bits.CN3PUE = 1;
     CNPU1bits.CN6PUE = 1;
+//    CNPU2bits.CN22PUE=1;//pull up resistor for rows
+//    CNPU2bits.CN21PUE=1;
+//    CNPU2bits.CN16PUE=1;
+//    CNPU1bits.CN15PUE=1;
 
 
     IFS1bits.CNIF = 0; // enable change notification interrupt
@@ -42,7 +46,7 @@ void KeypadInitialize() {
     CNEN1bits.CN3IE = 1;
     CNEN1bits.CN6IE = 1;
 
-
+    
 
 }
 
@@ -52,11 +56,9 @@ char KeypadScan() {
 	char key;
         int scan;
         int row;
-        int masking=0x0400;
-        int temp=0;
         int pressed=0;
-	
-	// TODO: Implement the keypad scanning procedure to detect if exactly one button of the 
+      int hide=0x0800;
+	int mask;	// TODO: Implement the keypad scanning procedure to detect if exactly one button of the
 	// keypad is pressed. The function should return:
 	//
 	//      -1         : Return -1 if no keys are pressed.
@@ -73,11 +75,11 @@ char KeypadScan() {
 	//           users presses multiple keys simultaneously.
 	//
 
-        //check if a key was pressed, set all rows to 0 first
-        LATBbits.LATB11=0;//row1
-        LATBbits.LATB10=0;//row 2
-        LATBbits.LATB9=0;//row 3
-        LATBbits.LATB8=0;//row 4
+//        check if a key was pressed, set all rows to 0 first
+//        LATBbits.LATB11=0;//row1
+//        LATBbits.LATB10=0;//row 2
+//        LATBbits.LATB9=0;//row 3
+//        LATBbits.LATB8=0;//row 4
 
         if (PORTAbits.RA0==0 || PORTAbits.RA1==0 || PORTBbits.RB2==0)
         {
@@ -86,25 +88,36 @@ char KeypadScan() {
                 if (PORTAbits.RA1==0 || PORTBbits.RB2==0)//if another key in another column was pressed
                     key=-1;
                 else
+                {
                     scan=1;
+                    key=1;
+                }
+               
+
             }
              if(PORTAbits.RA1==0)//if a key in first column was pressed pressed
             {
                 if (PORTAbits.RA0==0 || PORTBbits.RB2==0)//if another key in another column was pressed
                     key=-1;
                 else
+                {
                     scan=2;
+                    key=1;
+                }
+                
             }
              if(PORTBbits.RB2==0)//if a key in first column was pressed pressed
             {
                 if (PORTAbits.RA1==0 || PORTAbits.RA0==0)//if another key in another column was pressed
                     key=-1;
                 else
+                {
                     scan=3;
+                    key=1;
+                }
+               
             }
            
-             else // if only 1 key was pressed
-                 key=1;
 
         }
         else if (PORTAbits.RA0==1 && PORTAbits.RA1==1 && PORTBbits.RB2==1)
@@ -112,15 +125,18 @@ char KeypadScan() {
 
         if(key==1)//check which key was pressed
         {
+         for(row=1;row<=4;row++)
+         {
+            // turn on row output with bitmasking
+			mask = ~(0xF4FF | hide);    //bitwise OR operation
+           	LATB = (LATB & 0xF4FF) | mask;   //bitwise operation
+			hide = hide >> 1; // left shift bitwise by 1
+
+          
 
             switch(scan){
                 case 1://if the key pressed is in column 1
-                    for(row=1;row<=4;row++)
-                    {
-                        temp=masking^LATB;
-                        temp=~temp;
-                        LATB=temp;
-                        masking=masking>>1;
+                   
 
                         if(row==1 && PORTAbits.RA0==0)
                         {//if the key in ROW 1 & column 1 was pressed
@@ -144,15 +160,11 @@ char KeypadScan() {
                         }
                         else if(pressed>1)//if more than 1 key was pressed
                             key=-1;
-                    }
+                    
                     break;
 
                 case 2://if key pressed is in column 2
-                        temp=masking^LATB;
-                        temp=~temp;
-                        LATB=temp;
-                        masking=masking>>1;
-
+                        
                         if(row==1 && PORTAbits.RA1==0)
                         {//if the key in ROW 1 & column 2 was pressed
                             pressed=pressed+1;
@@ -178,10 +190,6 @@ char KeypadScan() {
                     break;
 
                 case 3://if key pressed is in column 3
-                        temp=masking^LATB;
-                        temp=~temp;
-                        LATB=temp;
-                        masking=masking>>1;
 
                         if(row==1 && PORTBbits.RB2==0)
                         {//if the key in ROW 1 & column 3 was pressed
@@ -207,8 +215,8 @@ char KeypadScan() {
                             key=-1;
                     break;
             }
+         }
         }
-        
         return(key);
 }
 

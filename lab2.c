@@ -38,7 +38,8 @@ volatile char scanKeypad;
 int main(void)
 {
 	char key;
-	
+        int i=0;
+
 	// TODO: Initialize and configure IOs, LCD (using your code from Lab 1), 
 	// UART (if desired for debugging), and any other configurations that are needed.
 	
@@ -46,21 +47,28 @@ int main(void)
 	KeypadInitialize();
 	
 	// TODO: Initialize scanKeypad variable.
-        scanKeypad=1;
+       LCDMoveCursor(0,0);
+       LCDPrintString("Enter");
+       LCDMoveCursor(1,0);
+       LCDPrintString("Password");
 	while(1)
 	{
 		// TODO: Once you create the correct keypad driver (Part 1 of the lab assignment), write
 		// the C program that use both the keypad and LCD drivers to implement the 4-digit password system.
-		
-
+	
+              
+               
+                   
 		if( scanKeypad == 1 ) {
+                    for(i=0;i<=14400;i++);
 			key = KeypadScan();
 			if( key != -1 ) {
 				LCDMoveCursor(0,0);		
 				LCDPrintChar(key);
 			}
 			scanKeypad = 0;
-		}		
+		}
+        
 	}
 	return 0;
 }
@@ -84,6 +92,15 @@ void __attribute__((interrupt)) _CNInterrupt(void)
 	
 	// TODO: Detect if *any* key of the keypad is *pressed*, and update scanKeypad
 	// variable to indicate keypad scanning process must be executed.
+
+
+        if (PORTAbits.RA0==0 || PORTAbits.RA1==0 || PORTBbits.RB2==0)
+             scanKeypad=1;
+        else
+            scanKeypad=0;
+
+
+
 }
 
 // ******************************************************************************************* //

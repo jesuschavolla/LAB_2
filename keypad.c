@@ -57,8 +57,8 @@ char KeypadScan() {
         int scan;
         int row;
         int pressed=0;
-    
-	int mask = 0x0800;	// TODO: Implement the keypad scanning procedure to detect if exactly one button of the
+        int hide = 0x0800;
+	int mask = 0;	// TODO: Implement the keypad scanning procedure to detect if exactly one button of the
 	// keypad is pressed. The function should return:
 	//
 	//      -1         : Return -1 if no keys are pressed.
@@ -76,10 +76,10 @@ char KeypadScan() {
 	//
 
 //        check if a key was pressed, set all rows to 0 first
-//        LATBbits.LATB11=0;//row1
-//        LATBbits.LATB10=0;//row 2
-//        LATBbits.LATB9=0;//row 3
-//        LATBbits.LATB8=0;//row 4
+        LATBbits.LATB11=0;//row1
+        LATBbits.LATB10=0;//row 2
+        LATBbits.LATB9=0;//row 3
+        LATBbits.LATB8=0;//row 4
 
         if (PORTAbits.RA0==0 || PORTAbits.RA1==0 || PORTBbits.RB2==0)
         {
@@ -125,13 +125,13 @@ char KeypadScan() {
 
         if(key==1)//check which key was pressed
         {
-            LATB = (LATB | 0x0700)& 0xF700;
+         
          for(row=1;row<=4;row++)
          {
             // turn on row output with bitmasking
-//			mask = ~(0xF4FF | hide);    //bitwise OR operation
-//           	LATB = (LATB & 0xF4FF) | mask;   //bitwise operation
-//			hide = hide >> 1; // left shift bitwise by 1
+			mask = ~(0xF4FF | hide);    //bitwise OR operation
+           	LATB = (LATB & 0xF4FF) | mask;   //bitwise operation
+			hide = hide >> 1; // left shift bitwise by 1
 
 
 
@@ -218,10 +218,7 @@ char KeypadScan() {
                             key=-1;
                     break;
             }
-            mask = (~LATB)& 0x0FFF;
-            mask = LATB >> 1;
-            mask= ~LATB & 0x0F00;
-            LATB = (LATB & 0xF000) | mask;
+           
          }
         }
         return(key);

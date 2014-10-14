@@ -44,7 +44,7 @@ int main(void)
         int i=0;
         int starpound=0;
         
-       char data[4]= {'1','2','3','4'};
+       char data[4][4]= {'1','2','3','4'};
       char temporary[4];
 
         PR1 = 57599;//1 second delay
@@ -110,7 +110,7 @@ int main(void)
                               
                                  for(i=0;i<=3;i++){
 
-                                   if(data[i]!=temporary[i]){
+                                   if(data[0][i]!=temporary[i]){
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
@@ -121,7 +121,7 @@ int main(void)
                                     break;
                                     }
                                    else if(i==3)
-                                    if(data[3]==temporary[3]){
+                                    if(data[0][3]==temporary[3]){
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Good");

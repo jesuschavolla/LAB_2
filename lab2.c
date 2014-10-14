@@ -153,8 +153,7 @@ int main(void)
                                 }
                                 else if(count==1 && key== '*')
                                 {
-                                     LCDMoveCursor(1,count);
-                                     LCDPrintChar(key);
+                                    LCDClear();
                                      count=0;
                                      doublecheck=0;
                                      state=2;
@@ -186,10 +185,11 @@ int main(void)
                     break;
 
                     case 2://Program mode
-                        LCDClear();
+                        
                         LCDMoveCursor(0,0);
                         LCDPrintString("Set Mode");
                         state=3;
+                        scanKeypad = 0;
                         break;
                         
                     case 3:

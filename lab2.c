@@ -42,9 +42,16 @@ int main(void)
         int state;//keeps track of current state
         int doublecheck=0;
         int i=0;
+        int j=0;
         int starpound=0;
         
        char data[4][4]= {'1','2','3','4'};
+       for(i=1; i <=3; i++){
+           for(j=0; j<=3; j++){
+               data[i][j] = 'p';
+           }
+
+       }
       char temporary[4];
 
         PR1 = 57599;//1 second delay
@@ -262,6 +269,33 @@ int main(void)
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Valid");
                                              cnt=0;
+                                             if(data[1][0] == 'p'){
+                                                 for(i=0; i<=3; i++){
+                                                     data[1][i] = temporary[i];
+                                                 }
+                                             }
+
+                                             else if(data[2][0] == 'p'){
+                                                 for(i=0; i<=3; i++){
+                                                     data[1][i] = temporary[i];
+                                                 }
+                                             }
+
+                                             else if(data[3][0] == 'p'){
+                                                 for(i=0; i<=3; i++){
+                                                     data[1][i] = temporary[i];
+                                                 }
+                                             }
+
+                                             else {
+                                                 LCDMoveCursor(0,0);
+                                                 LCDPrintString("Chavolla");
+                                                 LCDMoveCursor(1,0);
+                                                 LCDPrintString("es puto");
+                                             }
+
+
+
                                             while(cnt<3);//2 second delay;
                                             LCDClear();
                                             state=0;

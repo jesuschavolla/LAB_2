@@ -35,7 +35,6 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 volatile char scanKeypad;
 volatile unsigned char cnt;
 // ******************************************************************************************* //
-
 int main(void)
 {
 	char key;
@@ -150,7 +149,6 @@ int main(void)
                                     break;
                                 }
                                 else{
-                                    LCDMoveCursor(0,0);
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");

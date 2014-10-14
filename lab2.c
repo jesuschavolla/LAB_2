@@ -41,8 +41,10 @@ int main(void)
         int count=0;//keeps track of how many times each key was pressed.
         int state;//keeps track of current state
         int doublecheck=0;
-//        char password[] ={'1','2','3','4'};
-//        char temporary[4];
+        int i=0;
+        
+       char data[4][4]= {'1','2','3','4','0','0','0','0','0','0','0','0','0','0','0','0'};
+      char temporary[4];
 
         PR1 = 57599;//1 second delay
 	TMR1 = 0;//resets timer 1
@@ -84,38 +86,53 @@ int main(void)
                             if(count==0){
 				LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                               // temporary[count]='key';
+                               temporary[count]='key';
                                 count++;
                             }
                             else if (count==1){
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                               // temporary[count]='key';
+                                temporary[count]=key;
                                 count++;
                             }
                             else if (count==2){
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                              //  temporary[count]='key';
+                                temporary[count]=key;
                                 count++;
                             }
                             else if (count==3){
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                              //  temporary[count]='key';
+                               temporary[count]=key;
                                 count++;
                             }
-//                            else if(count==4)//after password was made, determine if its good
-//                            {
-//                                if(password==temporary){
-//                                    LCDMoveCursor(0,0);
-//                                    LCDPrintString("Good");
-//                                    cnt=0;
-//                                    while(cnt<3);//2 second delay;
-//                                    LCDClear();
-//
-//                                }
-//                            }
+                            else if(count==4)//after password was made, determine if its good
+                            {
+                                for(i=0;i<=3;i++){
+                                    if(data[0][i]!=temporary[i]){
+                                    LCDClear();
+                                    LCDMoveCursor(0,0);
+                                    LCDPrintString("Bad");
+                                    cnt=0;
+                                    state=0;
+                                    while(cnt<3);//2 second delay;
+                                    LCDClear();
+                                    break;
+                                    }
+
+                                    if(data[3]==temporary[3]){
+                                        LCDClear();
+                                    LCDMoveCursor(0,0);
+                                    LCDPrintString("Good");
+                                    cnt=0;
+                                    while(cnt<3);//2 second delay;
+                                    LCDClear();
+                                }
+
+                                }
+                                
+                            }
 
                         }
                         else if( key != -1 && (key=='*'|| key =='#'))

@@ -225,6 +225,19 @@ int main(void)
                                temporary[count]=key;
                                count++;
                          }
+                             else if(count==5){//invalid
+                                    LCDClear();
+                                    LCDMoveCursor(0,0);
+                                    LCDPrintString("Invalid");
+                                    cnt=0;
+                                    while(cnt<3);//2 second delay;
+                                    LCDClear();
+                                    count=0;
+                                    starpound=0;
+                                    state=0;
+                                    break;
+
+                             }
 
                         }
 
@@ -239,24 +252,51 @@ int main(void)
                                      count++;
                                      starpound=1;
                                 }
+
                                 else if(count==5)
                                 {
                                     if(key=='#')
                                     {
                                         if(starpound==0){//valid
+                                              LCDClear();
+                                             LCDMoveCursor(0,0);
+                                             LCDPrintString("Valid");
+                                             cnt=0;
+                                            while(cnt<3);//2 second delay;
+                                            LCDClear();
                                             state=0;
                                             count=0;
                                             starpound=0;
                                             break;
                                         }
                                         else if(starpound==1){//invalid
+                                             LCDClear();
+                                             LCDMoveCursor(0,0);
+                                             LCDPrintString("Invalid");
+                                             cnt=0;
+                                            while(cnt<3);//2 second delay;
+                                            LCDClear();
+
                                             state=0;
                                             count=0;
                                             starpound=0;
                                             break;
                                         }
+                                    }
+                                    else if(key='*'){//Invalid
+                                         LCDClear();
+                                             LCDMoveCursor(0,0);
+                                             LCDPrintString("Invalid");
+                                             cnt=0;
+                                            while(cnt<3);//2 second delay;
+                                            LCDClear();
+
+                                            state=0;
+                                            count=0;
+                                            starpound=0;
+                                            break;
+                                    }
                                 }
-                               
                         }
 			scanKeypad = 0;
                         break;
@@ -303,7 +343,6 @@ void __attribute__((interrupt)) _CNInterrupt(void)
 }
 void __attribute__((interrupt,auto_psv)) _T1Interrupt(void)
 //void _ISR _T1Interrupt(void)
-
 {
 	// Clear Timer 1 interrupt flag to allow another Timer 1 interrupt to occur.
 	IFS0bits.T1IF = 0;

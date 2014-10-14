@@ -42,6 +42,7 @@ int main(void)
         int state;//keeps track of current state
         int doublecheck=0;
         int i=0;
+        int starpound=0;
         
        char data[4]= {'1','2','3','4'};
       char temporary[4];
@@ -190,7 +191,74 @@ int main(void)
                         LCDPrintString("Set Mode");
                         state=3;
                         break;
+                        
                     case 3:
+
+                        if( key != -1 && key!='*'&& key !='#') {
+                            if(count==0){
+				LCDMoveCursor(1,count);
+				LCDPrintChar(key);
+                               temporary[count]=key;
+                                count++;
+                            }
+                            else if (count==1){
+                                LCDMoveCursor(1,count);
+				LCDPrintChar(key);
+                                temporary[count]=key;
+                                count++;
+                            }
+                            else if (count==2){
+                                LCDMoveCursor(1,count);
+				LCDPrintChar(key);
+                                temporary[count]=key;
+                                count++;
+                            }
+                            else if (count==3){
+                                LCDMoveCursor(1,count);
+				LCDPrintChar(key);
+                               temporary[count]=key;
+                               count++;
+                         }
+                             else if (count==4){
+                                LCDMoveCursor(1,count);
+				LCDPrintChar(key);
+                               temporary[count]=key;
+                               count++;
+                         }
+
+                        }
+
+
+                        else if( key != -1 && (key=='*'|| key =='#'))
+                        {
+
+                                if(count<=4)
+                                {
+                                     LCDMoveCursor(1,count);
+                                     LCDPrintChar(key);
+                                     count++;
+                                     starpound=1;
+                                }
+                                else if(count==5)
+                                {
+                                    if(key=='#')
+                                    {
+                                        if(starpound==0){//valid
+                                            state=0;
+                                            count=0;
+                                            starpound=0;
+                                            break;
+                                        }
+                                        else if(starpound==1){//invalid
+                                            state=0;
+                                            count=0;
+                                            starpound=0;
+                                            break;
+                                        }
+                                }
+                               
+                        }
+			scanKeypad = 0;
                         break;
                     
                        

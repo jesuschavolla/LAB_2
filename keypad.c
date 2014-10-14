@@ -114,7 +114,7 @@ char KeypadScan() {
                 if (PORTAbits.RA1==0 || PORTBbits.RB2==0)//if another key in another column was pressed
                     key=-1;
                 else
-                    key=1; 
+                    key=1;
 
             }
              if(PORTAbits.RA1==0)//if a key in first column was pressed pressed
@@ -153,7 +153,7 @@ char KeypadScan() {
 //            hide= hide>>1;
 //
                       
-                        if(i==1 && PORTAbits.RA0==0)
+                        if(i==1&& PORTBbits.RB11==0 && PORTAbits.RA0==0)
                         {//if the key in ROW 1 & column 1 was pressed
                             pressed=pressed+1;
                             key='1';
@@ -161,7 +161,7 @@ char KeypadScan() {
                         }
                         
                        
-                        else if (i==2 && PORTAbits.RA0==0)
+                        else if (i==2&& PORTBbits.RB10==0 && PORTAbits.RA0==0)
                         {//if the key in ROW 2 & column 1 was pressed
                             pressed=pressed+1;
                             key='4';
@@ -169,7 +169,7 @@ char KeypadScan() {
                         }
                         
                       
-                          if(i==3  && PORTAbits.RA0==0)
+                          if(i==3&& PORTBbits.RB9==0  && PORTAbits.RA0==0)
                         {//if the key in ROW 3 & column 1 was pressed
                             pressed=pressed+1;
                            key='7';
@@ -177,7 +177,7 @@ char KeypadScan() {
                         }
                          
                 
-                         if(PORTBbits.RB8==0 && PORTAbits.RA0==0)
+                         if(i==4&& PORTBbits.RB8==0 && PORTAbits.RA0==0)
                         {//if the key in ROW 4 & column 1 was pressed
                             pressed=pressed+1;
                             key='*';
@@ -186,7 +186,7 @@ char KeypadScan() {
                           
                     
                          
-                        else if(PORTBbits.RB11==0 && PORTAbits.RA1==0)
+                        else if(i==1&& PORTBbits.RB11==0 && PORTAbits.RA1==0)
                         {//if the key in ROW 1 & column 2 was pressed
                             pressed=pressed+1;
                             key='2';
@@ -194,7 +194,7 @@ char KeypadScan() {
                         }
          
                          
-                        else  if (PORTBbits.RB10==0 && PORTAbits.RA1==0)
+                        else  if (i==2&& PORTBbits.RB10==0 && PORTAbits.RA1==0)
                         {//if the key in ROW 2 & column 2 was pressed
                             pressed=pressed+1;
                             key='5';
@@ -202,7 +202,7 @@ char KeypadScan() {
                         }
          
             
-                        else if(PORTBbits.RB9==0 && PORTAbits.RA1==0)
+                        else if(i==3&& PORTBbits.RB9==0 && PORTAbits.RA1==0)
                         {//if the key in ROW 3 & column 2 was pressed
                             pressed=pressed+1;
                             key='8';
@@ -210,7 +210,7 @@ char KeypadScan() {
                         }
             
                        
-                        else if(PORTBbits.RB8==0 && PORTAbits.RA1==0)
+                        else if(i==4&& PORTBbits.RB8==0&& PORTAbits.RA1==0)
                         {//if the key in ROW 4 & column 2 was pressed
                             pressed=pressed+1;
                             key='0';
@@ -219,7 +219,7 @@ char KeypadScan() {
          
 
                       
-                       else if(PORTBbits.RB11==0 && PORTBbits.RB2==0)
+                       else if(i==1&& PORTBbits.RB11==0 && PORTBbits.RB2==0)
                         {//if the key in ROW 1 & column 3 was pressed
                             pressed=pressed+1;
                             key='3';
@@ -227,7 +227,7 @@ char KeypadScan() {
                         }
          
                        
-                        else if (PORTBbits.RB10==0 && PORTBbits.RB2==0)
+                        else if (i==2&& PORTBbits.RB10==0 && PORTBbits.RB2==0)
                         {//if the key in ROW 2 & column 3 was pressed
                             pressed=pressed+1;
                             key='6';
@@ -235,7 +235,7 @@ char KeypadScan() {
                         }
          
                         
-                        else if(PORTBbits.RB9==0 && PORTBbits.RB2==0)
+                        else if(i==3&& PORTBbits.RB9==0 && PORTBbits.RB2==0)
                         {//if the key in ROW 3 & column 3 was pressed
                             pressed=pressed+1;
                             key='9';
@@ -243,7 +243,7 @@ char KeypadScan() {
                         }
                         
                        
-                        else if(PORTBbits.RB8==0 && PORTBbits.RB2==0)
+                        else if(i==4&& PORTBbits.RB8==0 && PORTBbits.RB2==0)
                         {//if the key in ROW 4 & column 3 was pressed
                             pressed=pressed+1;
                             key='#';

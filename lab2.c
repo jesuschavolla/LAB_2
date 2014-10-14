@@ -43,7 +43,7 @@ int main(void)
         int doublecheck=0;
         int i=0;
         
-       char data[4][4]= {'1','2','3','4','0','0','0','0','0','0','0','0','0','0','0','0'};
+       char data[0][4]= {'1','2','3','4'};
       char temporary[4];
 
         PR1 = 57599;//1 second delay
@@ -105,11 +105,8 @@ int main(void)
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
                                temporary[count]=key;
-                                count++;
-                            }
-                            else if(count==4)//after password was made, determine if its good
-                            {
-                                for(i=0;i<=3;i++){
+
+                               for(i=0;i<=3;i++){
                                     if(data[0][i]!=temporary[i]){
                                     LCDClear();
                                     LCDMoveCursor(0,0);
@@ -120,21 +117,26 @@ int main(void)
                                     LCDClear();
                                     break;
                                     }
-
-                                    if(data[3]==temporary[3]){
-                                        LCDClear();
+                                    else if(i==3){
+                                   if(data[0][i]==temporary[i]){
+                                    LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Good");
                                     cnt=0;
                                     while(cnt<3);//2 second delay;
                                     LCDClear();
-                                }
-
-                                }
+                                    state=0;
+                                   }
+                                 }
+                         }
+                             
+                            
+                               }
+                                
                                 
                             }
 
-                        }
+                        
                         else if( key != -1 && (key=='*'|| key =='#'))
                         {
                             
@@ -183,6 +185,9 @@ int main(void)
                         LCDClear();
                         LCDMoveCursor(0,0);
                         LCDPrintString("Set Mode");
+                        break;
+                    case 3:
+                         
                         break;
                 }
             }

@@ -6,7 +6,7 @@
 #include "p24fj64ga002.h"
 #include <stdio.h>
 #include "lcd.h"
-//#include "keypad.h"
+#include "keypad.h"
 
 // ******************************************************************************************* //
 // Configuration bits for CONFIG1 settings. 
@@ -43,7 +43,7 @@ int main(void)
         int doublecheck=0;
         int i=0;
         
-       char data[0][4]= {'1','2','3','4'};
+       char data[4]= {'1','2','3','4'};
       char temporary[4];
 
         PR1 = 57599;//1 second delay
@@ -86,7 +86,7 @@ int main(void)
                             if(count==0){
 				LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                               temporary[count]='key';
+                               temporary[count]=key;
                                 count++;
                             }
                             else if (count==1){
@@ -105,9 +105,11 @@ int main(void)
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
                                temporary[count]=key;
+                               
+                              
+                                 for(i=0;i<=3;i++){
 
-                               for(i=0;i<=3;i++){
-                                    if(data[0][i]!=temporary[i]){
+                                   if(data[i]!=temporary[i]){
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
@@ -117,8 +119,8 @@ int main(void)
                                     LCDClear();
                                     break;
                                     }
-                                    else if(i==3){
-                                   if(data[0][i]==temporary[i]){
+                                   else if(i==3)
+                                    if(data[3]==temporary[3]){
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Good");
@@ -126,13 +128,14 @@ int main(void)
                                     while(cnt<3);//2 second delay;
                                     LCDClear();
                                     state=0;
+                                    break;
+
                                    }
-                                 }
-                         }
-                             
-                            
-                               }
-                                
+
+
+                        }
+                               
+                         }   
                                 
                             }
 
@@ -185,12 +188,17 @@ int main(void)
                         LCDClear();
                         LCDMoveCursor(0,0);
                         LCDPrintString("Set Mode");
+                        state=3;
                         break;
                     case 3:
-                         
                         break;
+                    
+                       
+                        
                 }
             }
+            
+               
       
 	}
 	return 0;

@@ -195,7 +195,10 @@ void __attribute__((interrupt)) _CNInterrupt(void)
 	
 	// TODO: Detect if *any* key of the keypad is *pressed*, and update scanKeypad
 	// variable to indicate keypad scanning process must be executed.
-
+//        LATBbits.LATB11=0;//row1
+//        LATBbits.LATB10=0;//row 2
+//        LATBbits.LATB9=0;//row 3
+//        LATBbits.LATB8=0;//row 4
 
         if (PORTAbits.RA0==0 || PORTAbits.RA1==0 || PORTBbits.RB2==0)
              scanKeypad=1;

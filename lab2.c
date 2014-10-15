@@ -35,6 +35,12 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 volatile char scanKeypad;
 volatile unsigned char cnt;
 // ******************************************************************************************* //
+void discardarray(char discard[4]){
+    int i=0;
+     for(i=1; i <=3; i++){
+         discard[i]='p';
+     }
+}
 int main(void)
 {
 	char key;
@@ -44,14 +50,21 @@ int main(void)
         int i=0;
         int j=0;
         int starpound=0;
+        int passfilled = 1;
+        int Good=0;
         
-       char data[4][4]= {'1','2','3','4'};
-       for(i=1; i <=3; i++){
-           for(j=0; j<=3; j++){
-               data[i][j] = 'p';
-           }
+       char data[4][4]={{'1','2','3','4'},{'p','p','p','p'},{'p','p','p','p'},{'p','p','p','p'}};
+//       for(j=0;j<4; j++){
+//           for(i=0;i<4;i++){
+//               data[j][i] = 'p';
+//           }
+//       }
+//       data[0][0] = '1';
+//       data[0][1] = '2';
+//       data[0][2] = '3';
+//       data[0][3] = '4';
 
-       }
+
       char temporary[4];
 
         PR1 = 57599;//1 second delay
@@ -114,21 +127,25 @@ int main(void)
 				LCDPrintChar(key);
                                temporary[count]=key;
                                
-                              
-                                 for(i=0;i<=3;i++){
+                               Good=0;
+                               for(j=0;j<passfilled;j++)
+                               {
+                                   if(data[j][0]==temporary[0])
+                                   { 
+                                       if(data[j][1]==temporary[1])
+                                           if (data[j][2]==temporary[2])
+                                                  if (data[j][3]==temporary[3])
+                                                  {
+                                                      Good=1;
 
-                                   if(data[0][i]!=temporary[i]){
-                                    LCDClear();
-                                    LCDMoveCursor(0,0);
-                                    LCDPrintString("Bad");
-                                    cnt=0;
-                                    state=0;
-                                    while(cnt<3);//2 second delay;
-                                    LCDClear();
-                                    break;
-                                    }
-                                   else if(i==3)
-                                    if(data[0][3]==temporary[3]){
+                                                  }
+                                   }
+                                       
+                                  
+                                 
+                               }
+                               if(Good==1)
+                                {
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Good");
@@ -137,11 +154,20 @@ int main(void)
                                     LCDClear();
                                     state=0;
                                     break;
+                                }
+                               else if(Good==0)
+                                {
+                                    LCDClear();
+                                    LCDMoveCursor(0,0);
+                                    LCDPrintString("Bad");
+                                    cnt=0;
+                                    while(cnt<3);//2 second delay;
+                                    LCDClear();
+                                    state=0;
+                                    break;
+                                }
 
-                                   }
 
-
-                        }
                                
                          }   
                                 
@@ -155,10 +181,11 @@ int main(void)
                                 {
                                      LCDMoveCursor(1,count);
                                      LCDPrintChar(key);
+                                     doublecheck=1;
                                      count++;
-                                     doublecheck==1;
+                                     
                                 }
-                                else if(count==1 && key== '*')
+                                else if(count==1 && doublecheck==1 && key== '*')
                                 {
                                     LCDClear();
                                      count=0;
@@ -168,6 +195,9 @@ int main(void)
                                 }
                                 else if(count<2&& key=='#')
                                 {
+                                    LCDMoveCursor(1,count);
+                                    LCDPrintChar(key);
+
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
@@ -178,6 +208,9 @@ int main(void)
                                     break;
                                 }
                                 else{
+                                    LCDMoveCursor(1,count);
+                                    LCDPrintChar(key);
+
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
@@ -227,14 +260,12 @@ int main(void)
                                count++;
                          }
                              else if (count==4){
-                                LCDMoveCursor(1,count);
-				LCDPrintChar(key);
-                               temporary[count]=key;
-                               count++;
-                         }
-                             else if(count==5){//invalid
+                                //invalid
+                                    LCDMoveCursor(1,count);
+                                    LCDPrintChar(key);
                                     LCDClear();
                                     LCDMoveCursor(0,0);
+                                    discardarray(temporary);
                                     LCDPrintString("Invalid");
                                     cnt=0;
                                     while(cnt<3);//2 second delay;
@@ -252,7 +283,7 @@ int main(void)
                         else if( key != -1 && (key=='*'|| key =='#'))
                         {
 
-                                if(count<=4)
+                                if(count<=3)
                                 {
                                      LCDMoveCursor(1,count);
                                      LCDPrintChar(key);
@@ -260,47 +291,43 @@ int main(void)
                                      starpound=1;
                                 }
 
-                                else if(count==5)
+                                else if(count==4)
                                 {
                                     if(key=='#')
                                     {
                                         if(starpound==0){//valid
-                                              LCDClear();
+
+                                            if(passfilled<4)
+                                            { LCDClear();
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Valid");
                                              cnt=0;
-                                             if(data[1][0] == 'p'){
-                                                 for(i=0; i<=3; i++){
-                                                     data[1][i] = temporary[i];
-                                                 }
-                                             }
-
-                                             else if(data[2][0] == 'p'){
-                                                 for(i=0; i<=3; i++){
-                                                     data[1][i] = temporary[i];
-                                                 }
-                                             }
-
-                                             else if(data[3][0] == 'p'){
-                                                 for(i=0; i<=3; i++){
-                                                     data[1][i] = temporary[i];
-                                                 }
-                                             }
-
-                                             else {
-                                                 LCDMoveCursor(0,0);
-                                                 LCDPrintString("Chavolla");
-                                                 LCDMoveCursor(1,0);
-                                                 LCDPrintString("es puto");
-                                             }
-
-
-
-                                            while(cnt<3);//2 second delay;
+                                             while(cnt<2);//2 second delay;
                                             LCDClear();
                                             state=0;
                                             count=0;
                                             starpound=0;
+
+                                            }
+                                              if(data[passfilled][0] == 'p'){
+                                                 for(i=0; i<=3; i++){
+                                                     data[passfilled][i] = temporary[i];
+                                                 }
+
+                                             }
+
+                                             else if(passfilled == 4) {
+                                                 LCDClear();
+                                                 LCDMoveCursor(0,0);
+                                                 LCDPrintString("data");
+                                                 LCDMoveCursor(1,0);
+                                                 LCDPrintString("full");
+
+                                             }
+
+                                             passfilled++;
+
+                                            
                                             break;
                                         }
                                         else if(starpound==1){//invalid
@@ -317,8 +344,8 @@ int main(void)
                                             break;
                                         }
                                     }
-                                    else if(key='*'){//Invalid
-                                         LCDClear();
+                                    else if(key=='*'){//Invalid
+                                            LCDClear();
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Invalid");
                                              cnt=0;
@@ -358,7 +385,7 @@ int main(void)
 //
 // The functionality defined in an interrupt should be a minimal as possible
 // to ensure additional interrupts can be processed. 
-void __attribute__((interrupt)) _CNInterrupt(void)
+void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
 {	
 	// TODO: Clear interrupt flag
 	IFS1bits.CNIF = 0;

@@ -33,7 +33,7 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 // and the KeypadScan() function needs to be called.
 
 volatile char scanKeypad;
-volatile unsigned char cnt;
+volatile unsigned int cnt;
 // ******************************************************************************************* //
 void discardarray(char discard[4]){
     int i=0;
@@ -54,26 +54,26 @@ int main(void)
         int Good=0;
         
        char data[4][4]={{'1','2','3','4'},{'p','p','p','p'},{'p','p','p','p'},{'p','p','p','p'}};
-//       for(j=0;j<4; j++){
-//           for(i=0;i<4;i++){
-//               data[j][i] = 'p';
-//           }
-//       }
-//       data[0][0] = '1';
-//       data[0][1] = '2';
-//       data[0][2] = '3';
-//       data[0][3] = '4';
 
 
       char temporary[4];
+       PR2 =57599 ;//10 ms
+	TMR2 = 0;//resets timer 1
 
-        PR1 = 57599;//1 second delay
-	TMR1 = 0;//resets timer 1
-	IFS0bits.T1IF = 0;
-	IEC0bits.T1IE = 1;
-	T1CONbits.TCKPS = 3;
-	T1CONbits.TON = 1;
+	T2CONbits.TCKPS = 3;
+	T2CONbits.TON = 1;
 
+
+      TMR4 = 0;
+      TMR5 = 0;
+      PR4 = 0b1100000111111111 ;
+      PR5 = 0b1;
+      IFS1bits.T5IF = 0;
+      IEC1bits.T5IE = 1;
+      T4CONbits.T32 = 1;
+      T4CONbits.TCKPS0 = 1;
+      T4CONbits.TCKPS1 = 1;
+       T4CONbits.TON = 1;
 
 	// TODO: Initialize and configure IOs, LCD (using your code from Lab 1), 
 	// UART (if desired for debugging), and any other configurations that are needed.
@@ -126,7 +126,12 @@ int main(void)
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
                                temporary[count]=key;
+                               count++;
                                
+                               cnt=0;
+                               TMR3=0;
+                               TMR4=0;
+                               while(cnt<1);
                                Good=0;
                                for(j=0;j<passfilled;j++)
                                {
@@ -137,20 +142,22 @@ int main(void)
                                                   if (data[j][3]==temporary[3])
                                                   {
                                                       Good=1;
-
                                                   }
-                                   }
-                                       
-                                  
-                                 
+                                   } 
                                }
                                if(Good==1)
                                 {
                                     LCDClear();
                                     LCDMoveCursor(0,0);
+                                    
                                     LCDPrintString("Good");
+                                    discardarray(temporary);
                                     cnt=0;
-                                    while(cnt<3);//2 second delay;
+                                    TMR4 = 0;
+                                    TMR5 = 0;
+                                    
+                                    while(cnt<1);//2 second delay;
+                                    
                                     LCDClear();
                                     state=0;
                                     break;
@@ -160,10 +167,14 @@ int main(void)
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
+                                    discardarray(temporary);
                                     cnt=0;
-                                    while(cnt<3);//2 second delay;
+                                    TMR4 = 0;
+                                    TMR5= 0;
+                                    while(cnt<1);//2 second delay;
                                     LCDClear();
                                     state=0;
+
                                     break;
                                 }
 
@@ -197,12 +208,18 @@ int main(void)
                                 {
                                     LCDMoveCursor(1,count);
                                     LCDPrintChar(key);
-
+                                        TMR2=0;
+                               TMR3=0;
+                               cnt=0;
+                               while(cnt<1);
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
+                                    discardarray(temporary);
                                     cnt=0;
-                                    while(cnt<3);//2 second delay;
+                                    TMR4 = 0;
+                                    TMR5= 0;
+                                    while(cnt<1);//2 second delay;
                                     LCDClear();
                                     state=0;
                                     break;
@@ -210,12 +227,17 @@ int main(void)
                                 else{
                                     LCDMoveCursor(1,count);
                                     LCDPrintChar(key);
-
+                                        TMR2=0;
+                               TMR3=0;
+                               cnt=0;
+                               while(cnt<1);
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
                                     cnt=0;
-                                    while(cnt<3);//2 second delay;
+                                    TMR4 = 0;
+                                    TMR5= 0;
+                                    while(cnt<1);//2 second delay;
                                     LCDClear();
                                     state=0;
                                     break;
@@ -268,7 +290,9 @@ int main(void)
                                     discardarray(temporary);
                                     LCDPrintString("Invalid");
                                     cnt=0;
-                                    while(cnt<3);//2 second delay;
+                                    TMR4 = 0;
+                                    TMR5= 0;
+                                    while(cnt<1);//2 second delay;
                                     LCDClear();
                                     count=0;
                                     starpound=0;
@@ -301,8 +325,10 @@ int main(void)
                                             { LCDClear();
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Valid");
+                                             TMR4 = 0;
+                                             TMR5= 0;
                                              cnt=0;
-                                             while(cnt<2);//2 second delay;
+                                             while(cnt<1);//2 second delay;
                                             LCDClear();
                                             state=0;
                                             count=0;
@@ -319,9 +345,18 @@ int main(void)
                                              else if(passfilled == 4) {
                                                  LCDClear();
                                                  LCDMoveCursor(0,0);
-                                                 LCDPrintString("data");
+                                                 LCDPrintString("DATA");
                                                  LCDMoveCursor(1,0);
-                                                 LCDPrintString("full");
+                                                 LCDPrintString("FULL");
+                                                 TMR4 = 0;
+                                                 TMR5= 0;
+                                                 cnt=0;
+                                                while(cnt<1);//2 second delay;
+                                                LCDClear();
+                                                state=0;
+                                                count=0;
+                                                starpound=0;
+                                                break;
 
                                              }
 
@@ -334,8 +369,10 @@ int main(void)
                                              LCDClear();
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Invalid");
+                                             TMR4 = 0;
+                                             TMR5= 0;
                                              cnt=0;
-                                            while(cnt<3);//2 second delay;
+                                            while(cnt<1);//2 second delay;
                                             LCDClear();
 
                                             state=0;
@@ -349,7 +386,9 @@ int main(void)
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Invalid");
                                              cnt=0;
-                                            while(cnt<3);//2 second delay;
+                                             TMR4 = 0;
+                                             TMR5= 0;
+                                            while(cnt<1);//2 second delay;
                                             LCDClear();
 
                                             state=0;
@@ -402,13 +441,13 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
         else
             scanKeypad=0;
 }
-void __attribute__((interrupt,auto_psv)) _T1Interrupt(void)
+void __attribute__((interrupt,auto_psv)) _T5Interrupt(void)
 //void _ISR _T1Interrupt(void)
-{
+{      
 	// Clear Timer 1 interrupt flag to allow another Timer 1 interrupt to occur.
-	IFS0bits.T1IF = 0;
-        
-        cnt = (cnt<9)?(cnt+1):0;//counts the seconds
+	IFS1bits.T5IF = 0;
+        cnt++;
+        //cnt = (cnt<9)?(cnt+1):0;//counts the seconds
 
 }
 

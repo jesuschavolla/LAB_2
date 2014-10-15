@@ -84,7 +84,15 @@ char KeypadScan() {
         int i=0;
         int pressed=0;
         int hide=0x0800;
-	int mask=0x0000;	// TODO: Implement the keypad scanning procedure to detect if exactly one button of the
+	int mask=0x0000;
+
+        PR1 = 1151;//10 ms
+	TMR1 = 0;//resets timer 1
+
+	T1CONbits.TCKPS = 3;
+	T1CONbits.TON = 1;
+
+        // TODO: Implement the keypad scanning procedure to detect if exactly one button of the
 	// keypad is pressed. The function should return:
 	//
 	//      -1         : Return -1 if no keys are pressed.
@@ -107,24 +115,20 @@ char KeypadScan() {
         LATBbits.LATB9=0;//row 3
         LATBbits.LATB8=0;//row 4
 
-        if (PORTAbits.RA0==0 || PORTAbits.RA1==0 || PORTBbits.RB2==0)
-        {
+        
             if(PORTAbits.RA0==0)//if a key in first column was pressed pressed
             {
                 if (PORTAbits.RA1==0 || PORTBbits.RB2==0)//if another key in another column was pressed
                     key=-1;
                 else
                     key=1;
-
             }
              if(PORTAbits.RA1==0)//if a key in first column was pressed pressed
             {
                 if (PORTAbits.RA0==0 || PORTBbits.RB2==0)//if another key in another column was pressed
                     key=-1;
                 else
-                    key=1;
-                
-                
+                    key=1;    
             }
              if(PORTBbits.RB2==0)//if a key in first column was pressed pressed
             {
@@ -133,134 +137,102 @@ char KeypadScan() {
                 else
                     key=1;
             }
-           
-
-        }
-        else if (PORTAbits.RA0==1 && PORTAbits.RA1==1 && PORTBbits.RB2==1)
+        
+        if (PORTAbits.RA0==1 && PORTAbits.RA1==1 && PORTBbits.RB2==1)
             key=-1;// no key was pressed
 
-       while(key==1)//check which key was pressed
+      if(key==1)//check which key was pressed
         {
                  LATBbits.LATB11=0;//row1
                  LATBbits.LATB10=1;//row 2
                  LATBbits.LATB9=1;//row 3
                  LATBbits.LATB8=1;//row 4
-         for(i=1;i<=4;i++)
+
+                 TMR1=0;
+                while(TMR1<PR1);
+         for(i=1;i<5;i++)
          {
-//            mask=LATB;
-//            mask=(~ (mask & hide) )| 0xF0FF;
-//            LATB=mask & LATB;
-//            hide= hide>>1;
-//
+
                       
                         if(i==1&& PORTBbits.RB11==0 && PORTAbits.RA0==0)
                         {//if the key in ROW 1 & column 1 was pressed
+
                             pressed=pressed+1;
                             key='1';
-                              return(key);
                         }
-                        
+                        if(i==1&& PORTBbits.RB11==0 && PORTAbits.RA1==0)
+                        {//if the key in ROW 1 & column 2 was pressed
+                            pressed=pressed+1;
+                            key='2';
+                        }
+                        if(i==1&& PORTBbits.RB11==0 && PORTBbits.RB2==0)
+                        {//if the key in ROW 1 & column 3 was pressed
+                            pressed=pressed+1;
+                            key='3';
+                        }
                        
-                        else if (i==2&& PORTBbits.RB10==0 && PORTAbits.RA0==0)
+                        if (i==2&& PORTBbits.RB10==0 && PORTAbits.RA0==0)
                         {//if the key in ROW 2 & column 1 was pressed
                             pressed=pressed+1;
                             key='4';
-
                         }
-                        
-                      
-                          if(i==3&& PORTBbits.RB9==0  && PORTAbits.RA0==0)
+                        if (i==2&& PORTBbits.RB10==0 && PORTAbits.RA1==0)
+                        {//if the key in ROW 2 & column 2 was pressed
+                            pressed=pressed+1;
+                            key='5';
+                        }
+                        if (i==2&& PORTBbits.RB10==0 && PORTBbits.RB2==0)
+                        {//if the key in ROW 2 & column 3 was pressed
+                            pressed=pressed+1;
+                            key='6';
+                        }
+                        if(i==3&& PORTBbits.RB9==0  && PORTAbits.RA0==0)
                         {//if the key in ROW 3 & column 1 was pressed
                             pressed=pressed+1;
                            key='7';
-                             return(key);
                         }
-                         
-                
+                        if(i==3&& PORTBbits.RB9==0 && PORTAbits.RA1==0)
+                        {//if the key in ROW 3 & column 2 was pressed
+                            pressed=pressed+1;
+                            key='8';
+                        }
+                         if(i==3&& PORTBbits.RB9==0 && PORTBbits.RB2==0)
+                        {//if the key in ROW 3 & column 3 was pressed
+                            pressed=pressed+1;
+                            key='9';
+                        }
+                        
                          if(i==4&& PORTBbits.RB8==0 && PORTAbits.RA0==0)
                         {//if the key in ROW 4 & column 1 was pressed
                             pressed=pressed+1;
                             key='*';
-                              return(key);
                         }
-                          
-                    
-                         
-                        else if(i==1&& PORTBbits.RB11==0 && PORTAbits.RA1==0)
-                        {//if the key in ROW 1 & column 2 was pressed
-                            pressed=pressed+1;
-                            key='2';
-                              return(key);
-                        }
-         
-                         
-                        else  if (i==2&& PORTBbits.RB10==0 && PORTAbits.RA1==0)
-                        {//if the key in ROW 2 & column 2 was pressed
-                            pressed=pressed+1;
-                            key='5';
-                             return(key);
-                        }
-         
-            
-                        else if(i==3&& PORTBbits.RB9==0 && PORTAbits.RA1==0)
-                        {//if the key in ROW 3 & column 2 was pressed
-                            pressed=pressed+1;
-                            key='8';
-                              return(key);
-                        }
-            
-                       
-                        else if(i==4&& PORTBbits.RB8==0&& PORTAbits.RA1==0)
+                        if(i==4&& PORTBbits.RB8==0&& PORTAbits.RA1==0)
                         {//if the key in ROW 4 & column 2 was pressed
                             pressed=pressed+1;
                             key='0';
-                              return(key);
                         }
-         
-
-                      
-                       else if(i==1&& PORTBbits.RB11==0 && PORTBbits.RB2==0)
-                        {//if the key in ROW 1 & column 3 was pressed
-                            pressed=pressed+1;
-                            key='3';
-                              return(key);
-                        }
-         
                        
-                        else if (i==2&& PORTBbits.RB10==0 && PORTBbits.RB2==0)
-                        {//if the key in ROW 2 & column 3 was pressed
-                            pressed=pressed+1;
-                            key='6';
-                              return(key);
-                        }
-         
-                        
-                        else if(i==3&& PORTBbits.RB9==0 && PORTBbits.RB2==0)
-                        {//if the key in ROW 3 & column 3 was pressed
-                            pressed=pressed+1;
-                            key='9';
-                              return(key);
-                        }
-                        
-                       
-                        else if(i==4&& PORTBbits.RB8==0 && PORTBbits.RB2==0)
+                        if(i==4&& PORTBbits.RB8==0 && PORTBbits.RB2==0)
                         {//if the key in ROW 4 & column 3 was pressed
                             pressed=pressed+1;
                             key='#';
-                              return(key);
                         }
                         
-                        else if(pressed>1)//if more than 1 key was pressed
-                        {  key=-1;
-                          return(key);
-                        }
+                        if(pressed>1)//if more than 1 key was pressed
+                          key=-1;
+                        
 
              mask=LATB;
              mask= mask & 0xF0FF;
              hide=hide>>1;
              LATB= mask|((~hide)&0x0F00);
          }
-        
+                 LATBbits.LATB11=1;//row1
+                 LATBbits.LATB10=1;//row 2
+                 LATBbits.LATB9=1;//row 3
+                 LATBbits.LATB8=1;//row 4
+                
         }
 
         return(key);

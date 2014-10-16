@@ -1,4 +1,9 @@
 // ******************************************************************************************* //
+
+// LAB 2 completed
+// BY : Team 205: Jesus Chavolla, Uriel Garcia , Joshua Hurley
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 // Include file for PIC24FJ64GA002 microcontroller. This include file defines
 // MACROS for special function registers (SFR) and control bits within those
 // registers.

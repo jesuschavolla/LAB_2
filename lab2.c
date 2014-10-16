@@ -38,7 +38,7 @@ volatile unsigned int cnt;
 void discardarray(char discard[4]){
     int i=0;
      for(i=1; i <=3; i++){
-         discard[i]='p';
+         discard[i]='p'; //set values of array to 'p'
      }
 }
 int main(void)
@@ -49,31 +49,33 @@ int main(void)
         int doublecheck=0;
         int i=0;
         int j=0;
-        int starpound=0;
-        int passfilled = 1;
-        int Good=0;
+        int starpound=0;//keeps track of if star/pound is pressed
+        int passfilled = 1;//keeps track of number of passwords in array
+        int Good=0;//indicates validity of user-entered password
         
-       char data[4][4]={{'1','2','3','4'},{'p','p','p','p'},{'p','p','p','p'},{'p','p','p','p'}};
+       char data[4][4]={{'1','2','3','4'},{'p','p','p','p'},{'p','p','p','p'},{'p','p','p','p'}};//initialize array with '1234' password and 3 other passwords with 'pppp'
 
 
       char temporary[4];
        PR2 =57599 ;//10 ms
-	TMR2 = 0;//resets timer 1
+	   TMR2 = 0;//resets timer 1
 
-	T2CONbits.TCKPS = 3;
-	T2CONbits.TON = 1;
+	T2CONbits.TCKPS = 3;//set prescale to 256
+	T2CONbits.TON = 1; //turn on timer 2
 
 
-      TMR4 = 0;
-      TMR5 = 0;
+      TMR4 = 0;//reset timer 4
+      TMR5 = 0;//reset timer 5
+	  //both the following lines create a 32-bit 2s delay
       PR4 = 0b1100000111111111 ;
       PR5 = 0b1;
-      IFS1bits.T5IF = 0;
-      IEC1bits.T5IE = 1;
-      T4CONbits.T32 = 1;
+      IFS1bits.T5IF = 0;//flag down
+      IEC1bits.T5IE = 1;//enable on
+      T4CONbits.T32 = 1;//set to 32-bit timer
+	//set prescale to 256
       T4CONbits.TCKPS0 = 1;
       T4CONbits.TCKPS1 = 1;
-       T4CONbits.TON = 1;
+       T4CONbits.TON = 1;//turn on timer
 
 	// TODO: Initialize and configure IOs, LCD (using your code from Lab 1), 
 	// UART (if desired for debugging), and any other configurations that are needed.
@@ -83,7 +85,7 @@ int main(void)
 	
 	// TODO: Initialize scanKeypad variable.
      
-       state=0;
+       state=0;//initialize state
 	while(1)
 	{
 		// TODO: Once you create the correct keypad driver (Part 1 of the lab assignment), write
@@ -91,89 +93,101 @@ int main(void)
 
             if(state==0){//enter mode
                 LCDMoveCursor(0,0);
-                LCDPrintString("Enter");
-                count=0;
-                doublecheck=0;
-                state=1;
+                LCDPrintString("Enter");//display enter
+                count=0;//key position
+                doublecheck=0;//number of * entered in a row
+                state=1;//update state
             }
             if(scanKeypad==1)
             {
-                key = KeypadScan();
+                key = KeypadScan();//receive input key value
                 
                 switch(state){
 
                   case 1://User Mode
 			if( key != -1 && key!='*'&& key !='#' && doublecheck==0) {
-                            if(count==0){
-				LCDMoveCursor(1,count);
+			//if key valid and a number
+                            if(count==0){//if key is in 1st position
+								//print character in appropriate position
+								LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                               temporary[count]=key;
-                                count++;
+                               temporary[count]=key;//update temporary array value
+                                count++;//increment key position 
                             }
-                            else if (count==1){
+                            else if (count==1){ //if key is in 2nd position
+								//print character in appropriate position
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                                temporary[count]=key;
-                                count++;
+                                temporary[count]=key;//update temporary array value
+                                count++;//inrement key position
                             }
-                            else if (count==2){
+                            else if (count==2){//if key is in 3rd position
+								//print character in appropriate position
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                                temporary[count]=key;
-                                count++;
+                                temporary[count]=key;//update temporary array value
+                                count++;//inrement key position
                             }
-                            else if (count==3){
+                            else if (count==3){//if key is in 3rd position
+								//print character in appropriate position
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                               temporary[count]=key;
-                               count++;
+                               temporary[count]=key;//update temporary array value
+                               count++;//inrement key position
                                
                                cnt=0;
+							//reset 32-bit timer
                                TMR3=0;
                                TMR4=0;
-                               while(cnt<1);
+                               while(cnt<1);//2 second delay
                                Good=0;
-                               for(j=0;j<passfilled;j++)
+                               for(j=0;j<passfilled;j++)//check filled passwords
                                {
+								//if user input matched stored password
                                    if(data[j][0]==temporary[0])
                                    { 
                                        if(data[j][1]==temporary[1])
                                            if (data[j][2]==temporary[2])
                                                   if (data[j][3]==temporary[3])
                                                   {
-                                                      Good=1;
+                                                      Good=1;//passwords match
                                                   }
                                    } 
                                }
-                               if(Good==1)
+                               if(Good==1)//if passwords match
                                 {
+									//display 'Good'
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     
                                     LCDPrintString("Good");
+									//clear user-entered array
                                     discardarray(temporary);
                                     cnt=0;
+									//reset timer
                                     TMR4 = 0;
                                     TMR5 = 0;
                                     
                                     while(cnt<1);//2 second delay;
                                     
-                                    LCDClear();
-                                    state=0;
+                                    LCDClear();//clear display
+                                    state=0;//await user input
                                     break;
                                 }
-                               else if(Good==0)
+                               else if(Good==0)//if passwords don't match
                                 {
+									//display 'Bad'
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
-                                    discardarray(temporary);
-                                    cnt=0;
+                                    discardarray(temporary);//clear user-input array
+                                    cnt=0;//reset cnt
+									//reset timer
                                     TMR4 = 0;
                                     TMR5= 0;
                                     while(cnt<1);//2 second delay;
-                                    LCDClear();
-                                    state=0;
+                                    LCDClear();//clear user display
+                                    state=0;//await user input
 
                                     break;
                                 }
@@ -185,61 +199,70 @@ int main(void)
                             }
 
                         
-                        else if( key != -1 && (key=='*'|| key =='#'))
+                        else if( key != -1 && (key=='*'|| key =='#'))//if user entered key is a * or #
                         {
                             
-                                if(count==0 && key=='*')
+                                if(count==0 && key=='*')//if 1st position is *
                                 {
+									//display character
                                      LCDMoveCursor(1,count);
                                      LCDPrintChar(key);
-                                     doublecheck=1;
-                                     count++;
+                                     doublecheck=1;//increment * count
+                                     count++;//increment key position
                                      
                                 }
-                                else if(count==1 && doublecheck==1 && key== '*')
+                                else if(count==1 && doublecheck==1 && key== '*')//if 2 * entered in a row
                                 {
-                                    LCDClear();
-                                     count=0;
-                                     doublecheck=0;
-                                     state=2;
+                                    LCDClear();//clear display
+                                     count=0;//reset key position
+                                     doublecheck=0;//reset * count
+                                     state=2;//exit to state 2
                                      break;
                                 }
-                                else if(count<2&& key=='#')
+                                else if(count<2&& key=='#')//if # entered as character 1 or 2
                                 {
+									//display character
                                     LCDMoveCursor(1,count);
                                     LCDPrintChar(key);
-                                        TMR2=0;
-                               TMR3=0;
-                               cnt=0;
-                               while(cnt<1);
+									//reset timer
+                                    TMR2=0;
+                              		TMR3=0;
+                               		cnt=0;//reset cnt
+                               while(cnt<1);//2s delay
+							   	//display 'Bad'
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
-                                    discardarray(temporary);
-                                    cnt=0;
+                                    discardarray(temporary);//clear user entered array
+                                    cnt=0;//reset cnt
+									//reset timer
                                     TMR4 = 0;
                                     TMR5= 0;
                                     while(cnt<1);//2 second delay;
-                                    LCDClear();
-                                    state=0;
+                                    LCDClear();//clear display
+                                    state=0;//await user input
                                     break;
                                 }
                                 else{
+									//display key
                                     LCDMoveCursor(1,count);
                                     LCDPrintChar(key);
+										//reset timer
                                         TMR2=0;
-                               TMR3=0;
-                               cnt=0;
-                               while(cnt<1);
+                              		    TMR3=0;
+                               			cnt=0;//reset cnt
+                              	 while(cnt<1);//2s delay
+									//display 'Bad'
                                     LCDClear();
                                     LCDMoveCursor(0,0);
                                     LCDPrintString("Bad");
-                                    cnt=0;
+                                    cnt=0;//reset cnt
+									//reset timer
                                     TMR4 = 0;
                                     TMR5= 0;
                                     while(cnt<1);//2 second delay;
-                                    LCDClear();
-                                    state=0;
+                                    LCDClear();//clear display
+                                    state=0;//await user input
                                     break;
                                 }
                         }
@@ -247,7 +270,7 @@ int main(void)
                     break;
 
                     case 2://Program mode
-                        
+                        //display 'Set Mode'
                         LCDMoveCursor(0,0);
                         LCDPrintString("Set Mode");
                         state=3;
@@ -256,30 +279,34 @@ int main(void)
                         
                     case 3:
 
-                        if( key != -1 && key!='*'&& key !='#') {
-                            if(count==0){
-				LCDMoveCursor(1,count);
+                        if( key != -1 && key!='*'&& key !='#') { //if key entered in a number
+                            if(count==0){//key is 1st position
+								//display key
+								LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                               temporary[count]=key;
-                                count++;
+                               temporary[count]=key;//alter array to include key
+                                count++;//increment key position
                             }
-                            else if (count==1){
+                            else if (count==1){//key is 2nd position
+								//display key
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                                temporary[count]=key;
-                                count++;
+                                temporary[count]=key;//alter array to include key
+                                count++;//increment key position
                             }
-                            else if (count==2){
+                            else if (count==2){//key is 3rd position
+								//display key
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                                temporary[count]=key;
-                                count++;
+                                temporary[count]=key;//alter array to include key
+                                count++;//increment key position
                             }
-                            else if (count==3){
+                            else if (count==3){//key is 4th position
+								//display key
                                 LCDMoveCursor(1,count);
 				LCDPrintChar(key);
-                               temporary[count]=key;
-                               count++;
+                               temporary[count]=key;//alter array to include key
+                               count++;//increment key position
                          }
                              else if (count==4){
                                 //invalid
@@ -289,12 +316,13 @@ int main(void)
                                     LCDMoveCursor(0,0);
                                     discardarray(temporary);
                                     LCDPrintString("Invalid");
-                                    cnt=0;
+                                    cnt=0;//reset cnt
+									//reset timer
                                     TMR4 = 0;
                                     TMR5= 0;
                                     while(cnt<1);//2 second delay;
-                                    LCDClear();
-                                    count=0;
+                                    LCDClear();//clear display
+                                    count=0;//reset key position
                                     starpound=0;
                                     state=0;
                                     break;
@@ -304,63 +332,66 @@ int main(void)
                         }
 
 
-                        else if( key != -1 && (key=='*'|| key =='#'))
+                        else if( key != -1 && (key=='*'|| key =='#'))//key is * or #
                         {
 
-                                if(count<=3)
+                                if(count<=3)//key position is 1-4
                                 {
+									//display key
                                      LCDMoveCursor(1,count);
                                      LCDPrintChar(key);
-                                     count++;
-                                     starpound=1;
+                                     count++;//increment key position
+                                     starpound=1;//update starpound
                                 }
 
-                                else if(count==4)
+                                else if(count==4)//key position is 5
                                 {
-                                    if(key=='#')
+                                    if(key=='#')//key is #
                                     {
                                         if(starpound==0){//valid
 
-                                            if(passfilled<4)
+                                            if(passfilled<4)//data array has open position
                                             { LCDClear();
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Valid");
+											//reset timer
                                              TMR4 = 0;
                                              TMR5= 0;
-                                             cnt=0;
+                                             cnt=0;//reset cnt
                                              while(cnt<1);//2 second delay;
-                                            LCDClear();
-                                            state=0;
-                                            count=0;
-                                            starpound=0;
+                                            LCDClear();//clear display
+                                            state=0;//await user input
+                                            count=0;//key position to 0
+                                            starpound=0;//reset starpound
 
                                             }
-                                              if(data[passfilled][0] == 'p'){
+                                              if(data[passfilled][0] == 'p'){//if array slot open
                                                  for(i=0; i<=3; i++){
-                                                     data[passfilled][i] = temporary[i];
+                                                     data[passfilled][i] = temporary[i];//update with user entered key
                                                  }
 
                                              }
 
-                                             else if(passfilled == 4) {
+                                             else if(passfilled == 4) {//data array full
                                                  LCDClear();
                                                  LCDMoveCursor(0,0);
                                                  LCDPrintString("DATA");
                                                  LCDMoveCursor(1,0);
                                                  LCDPrintString("FULL");
+												//reset timer
                                                  TMR4 = 0;
                                                  TMR5= 0;
-                                                 cnt=0;
+                                                 cnt=0;//reset cnt
                                                 while(cnt<1);//2 second delay;
-                                                LCDClear();
-                                                state=0;
-                                                count=0;
-                                                starpound=0;
+                                                LCDClear();//clear display
+                                                state=0;//await user input
+                                                count=0;//key position to 0
+                                                starpound=0;//reset starpound
                                                 break;
 
                                              }
 
-                                             passfilled++;
+                                             passfilled++;//increment passfilled to next line in data array
 
                                             
                                             break;
@@ -369,14 +400,16 @@ int main(void)
                                              LCDClear();
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Invalid");
+											//reset timer
                                              TMR4 = 0;
                                              TMR5= 0;
-                                             cnt=0;
+                                             cnt=0;//reset cnt
                                             while(cnt<1);//2 second delay;
+											//clear display
                                             LCDClear();
 
-                                            state=0;
-                                            count=0;
+                                            state=0;//await key press
+                                            count=0;//key position to 0
                                             starpound=0;
                                             break;
                                         }
@@ -385,14 +418,15 @@ int main(void)
                                             LCDClear();
                                              LCDMoveCursor(0,0);
                                              LCDPrintString("Invalid");
-                                             cnt=0;
+                                             cnt=0;//reset cnt
+											//reset timer
                                              TMR4 = 0;
                                              TMR5= 0;
                                             while(cnt<1);//2 second delay;
-                                            LCDClear();
+                                            LCDClear();//clear display
 
-                                            state=0;
-                                            count=0;
+                                            state=0;//await key press
+                                            count=0;//key position to 0
                                             starpound=0;
                                             break;
                                     }
